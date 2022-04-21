@@ -118,7 +118,6 @@ try (var documentHolder = htmlFormatter.handle(doc)) {
 } catch (Throwable t) {}
 ...
 ```
-And get result
 
 <img src="pic/html.jpeg" width="512" alt=""/>
 
@@ -254,7 +253,7 @@ For more examples see [tests](src/test/java/com/reporter/TutorialTest.java).
 
 What reporter can't do yet:
 1) Render pictures
-2) Correct render nested elements in elements (for example table in table cell)
+2) Render any nested elements in any elements (for example table in table cell not available now)
 3) E.t.c.)
 
 #### Inner structure 
@@ -277,7 +276,7 @@ Please make sure to update tests as appropriate.
 when exporting texts with different languages to pdf format, try to use different fonts:
 
 1) Add appropriate .ttf file to [free_fonts](src/main/resources/free_fonts)
-   folder and set it to text style as in example:
+   folder and set it to text style as below:
 
 ```java 
 ...
