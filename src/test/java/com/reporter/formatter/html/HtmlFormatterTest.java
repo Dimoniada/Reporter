@@ -120,14 +120,14 @@ public class HtmlFormatterTest extends BaseDocument {
             .setBold(true)
             .setFontSize((short) 35)
             .setColor(Color.GREEN)
-            .setCondition(StyleCondition.create(o -> o instanceof Title, Title.class));
+            .setCondition(StyleCondition.create(Title.class, o -> o instanceof Title));
 
         final Style paragraphStyle = TextStyle
             .create()
             .setFontNameResource("Gill Sans")
             .setFontSize((short) 15)
             .setColor(Color.RED)
-            .setCondition(StyleCondition.create(o -> o instanceof Paragraph, Paragraph.class));
+            .setCondition(StyleCondition.create(Paragraph.class, o -> o instanceof Paragraph));
 
         final StyleService styleService = HtmlStyleService.create()
             .addStyles(titleStyle, paragraphStyle);
@@ -256,7 +256,7 @@ public class HtmlFormatterTest extends BaseDocument {
         final var interlinearStyle = layoutStyle1.clone().setFillPattern(FillPattern.SOLID_FOREGROUND);
         interlinearStyle
             .setCondition(
-                StyleCondition.create(o -> {
+                StyleCondition.create(TableRow.class, o -> {
                         if (o instanceof Table) {
                             return true;
                         }
@@ -276,8 +276,7 @@ public class HtmlFormatterTest extends BaseDocument {
                             return true;
                         }
                         return false;
-                    },
-                    TableRow.class
+                    }
                 )
             );
         htmlStyleService.addStyles(interlinearStyle);
@@ -413,7 +412,7 @@ public class HtmlFormatterTest extends BaseDocument {
 // Case of the named style class
         tc.setStyle(null);         // remove inner style
 
-        layoutStyle1.setCondition(StyleCondition.create(o -> o instanceof TableCell, TableCell.class));
+        layoutStyle1.setCondition(StyleCondition.create(TableCell.class, o -> o instanceof TableCell));
         styleService.addStyles(layoutStyle1);
 
         doc.addPart(tr);
@@ -460,7 +459,7 @@ public class HtmlFormatterTest extends BaseDocument {
 
 // Case of the named class style
         thc.setStyle(null);          // remove inner style
-        layoutStyle1.setCondition(StyleCondition.create(o -> o instanceof TableHeaderCell, TableHeaderCell.class));
+        layoutStyle1.setCondition(StyleCondition.create(TableHeaderCell.class, o -> o instanceof TableHeaderCell));
         styleService.addStyles(layoutStyle1);
 
         doc.addPart(thr);
@@ -518,7 +517,7 @@ public class HtmlFormatterTest extends BaseDocument {
 
 // Case of the named class style
         thc.setStyle(null);         // remove inner style
-        layoutStyle1.setCondition(StyleCondition.create(o -> o instanceof TableHeaderCell, TableHeaderCell.class));
+        layoutStyle1.setCondition(StyleCondition.create(TableHeaderCell.class, o -> o instanceof TableHeaderCell));
         styleService.addStyles(layoutStyle1);
 
         doc.addPart(thr);
@@ -581,7 +580,7 @@ public class HtmlFormatterTest extends BaseDocument {
         os.reset();
 // Case of the named style class
         item.setStyle(null);         // remove inner style
-        layoutStyle1.setCondition(StyleCondition.create(o -> o.getClass().equals(itemClass), itemClass));
+        layoutStyle1.setCondition(StyleCondition.create(itemClass, o -> o.getClass().equals(itemClass)));
         styleService.addStyles(layoutStyle1);
 
         doc.addPart(item);

@@ -65,7 +65,7 @@ public class QueryTableTests extends BaseQueryDocument {
             .setBorderLeft(singleBorder)
             .setBorderRight(singleBorder)
             .setBorderBottom(singleBorder)
-            .setCondition(StyleCondition.create(null, TableCell.class));
+            .setCondition(StyleCondition.create(TableCell.class, null));
 
         final var queryTable = QueryTable.create()
             .setQuery(

@@ -19,43 +19,46 @@ To start just add folder "reporter" to your project.
 |        org.slf4j         |     logging     |
 |     com.google.guava     |   toString()    |
 
-
 Documentation in progress.
 
 ## Example
 
-```java 
-//Document will be saved in a new file "Document name.xlsx"
-final var doc =
-    Document.create()
-        .setLabel("Document name")
-        .addParts(
-            Title.create("Title on first page"),
-            Table.create(
-                    TableHeaderRow.create(
-                        TableHeaderCell.create("Column1"),
-                        TableHeaderCell.create("Column2")
-                    )
-                )
+```java
+public class ReporterApplication {
+    public void Test() {
+        //Document will be saved in a new file "Document name.xlsx"
+        final var doc =
+            Document.create()
+                .setLabel("Document name")
                 .addParts(
-                    TableRow.create(
-                        TableCell.create("cell 1 1"),
-                        TableCell.create("cell 1 2")
-                    ),
-                    TableRow.create(
-                        TableCell.create("cell 2 1"),
-                        TableCell.create("cell 2 2")
-                    ) 
-                )
-        );
-//Creating appropriate formatter
-final var xlsxFormatter = XlsxFormatter.create();
-//DocumentHolder as AutoCloseable will be holding our file "Document name.xlsx"
-try (var documentHolder = xlsxFormatter.handle(doc)) {
-    var file = documentHolder.getResource().getFile();
-    //Any stuff with file here
-} catch (Throwable t) {
-    
+                    Title.create("Title on first page"),
+                    Table.create(
+                            TableHeaderRow.create(
+                                TableHeaderCell.create("Column1"),
+                                TableHeaderCell.create("Column2")
+                            )
+                        )
+                        .addParts(
+                            TableRow.create(
+                                TableCell.create("cell 1 1"),
+                                TableCell.create("cell 1 2")
+                            ),
+                            TableRow.create(
+                                TableCell.create("cell 2 1"),
+                                TableCell.create("cell 2 2")
+                            )
+                        )
+                );
+        //Creating appropriate formatter
+        final var xlsxFormatter = XlsxFormatter.create();
+        //DocumentHolder as AutoCloseable will be holding our file "Document name.xlsx"
+        try (var documentHolder = xlsxFormatter.handle(doc)) {
+            var file = documentHolder.getResource().getFile();
+            //Any stuff with file here
+        } catch (Throwable ignore) {
+
+        }
+    }
 }
 ```
 
@@ -66,13 +69,18 @@ results in
 Let's adjust cell width for our Title:
 
 ```java
-...
-    Title.create("Title on first page")
-    .setStyle(
-    LayoutStyle.create()
-    .setAutoWidth(true)
-    ),
-    ...
+public class ReporterApplication {
+    public void Test() {
+        final var title =
+            Title.create("Title on first page")
+                .setStyle(
+                    LayoutStyle.create()
+                        .setAutoWidth(true)
+                );
+
+    }
+
+}
 ```
 
 <img src="pic/xlsx2.jpeg" width="286" alt=""/>
@@ -80,101 +88,116 @@ Let's adjust cell width for our Title:
 Now let's add text style to table row cells:
 
 ```java
-...
-Table.create(
-    TableHeaderRow.create(
-       TableHeaderCell.create("Column1"),
-       TableHeaderCell.create("Column2")
-       )
-    )
-    .addParts(
-       TableRow.create(
-          TableCell.create("cell 1 1"),
-          TableCell.create("cell 1 2")
-       ),
-       TableRow.create(
-          TableCell.create("cell 2 1"),
-          TableCell.create("cell 2 2")
-       )
-    )
-    .spreadStyleToParts(                         //spreading style to table rows and their cells
-       TextStyle.create("Times New Roman")
-          .setBold(true)
-          .setItalic(true)
-          .setUnderline((byte)1)
-          .setFontSize((short)15)
-          .setColor(Color.GREY)
-    )
-...
+public class ReporterApplication {
+    public void Test() {
+        Table.create(
+                TableHeaderRow.create(
+                    TableHeaderCell.create("Column1"),
+                    TableHeaderCell.create("Column2")
+                )
+            )
+            .addParts(
+                TableRow.create(
+                    TableCell.create("cell 1 1"),
+                    TableCell.create("cell 1 2")
+                ),
+                TableRow.create(
+                    TableCell.create("cell 2 1"),
+                    TableCell.create("cell 2 2")
+                )
+            )
+            .spreadStyleToParts(                         //spreading style to table rows and their cells
+                TextStyle.create("Times New Roman")
+                    .setBold(true)
+                    .setItalic(true)
+                    .setUnderline((byte) 1)
+                    .setFontSize((short) 15)
+                    .setColor(Color.GREY)
+            );
+
+    }
+}
 ```
+
 <img src="pic/xlsx3.jpeg" width="286" alt=""/>
 
 We can put Document to HtmlFormatter:
+
 ```java
-...
-final var htmlFormatter = HtmlFormatter.create();
-try (var documentHolder = htmlFormatter.handle(doc)) {
-    var file = documentHolder.getResource().getFile();
-} catch (Throwable t) {}
-...
+public class ReporterApplication {
+    public void Test() {
+        final var htmlFormatter = HtmlFormatter.create();
+        try (var documentHolder = htmlFormatter.handle(doc)) {
+            var file = documentHolder.getResource().getFile();
+        } catch (Throwable ignored) {
+        }
+
+    }
+}
 ```
 
 <img src="pic/html.jpeg" width="512" alt=""/>
 
 Styles are written in each html-element because we assign them directly to elements through
 setStyle() or spreadStyleToParts(). It is convenient when using html4 specification.
-But in html5 with [StyleService](src/main/java/com/reporter/domain/styles/StyleService.java) 
+But in html5 with [StyleService](src/main/java/com/reporter/domain/styles/StyleService.java)
 using they will be written in header section with unique indexes.
 
 Ok, it seems we need some table borders:
+
 ```java
-...
-final var bordersStyle = LayoutStyle.create()
-   .setBorderTop(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
-   .setBorderLeft(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
-   .setBorderRight(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
-   .setBorderBottom(BorderStyle.create(Color.RED, BorderWeight.MEDIUM));
-...
-    Table.create(
-           TableHeaderRow.create(
-              TableHeaderCell.create("Column1"),
-              TableHeaderCell.create("Column2")
-           )
-           .spreadStyleToParts(bordersStyle)
-        )
-        .addParts(
-            ...
-        )
-        .spreadStyleToParts(
-           LayoutTextStyle.create(
-              TextStyle.create("Times New Roman")
-                 .setBold(true)
-                 .setItalic(true)
-                 .setUnderline((byte) 1)
-                 .setFontSize((short) 15)
-                 .setColor(Color.GREY),
-              bordersStyle
+public class ReporterApplication {
+    public void Test() {
+        final LayoutStyle bordersStyle = LayoutStyle.create()
+            .setBorderTop(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
+            .setBorderLeft(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
+            .setBorderRight(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
+            .setBorderBottom(BorderStyle.create(Color.RED, BorderWeight.MEDIUM));
+
+        final var table = Table.create(
+                TableHeaderRow.create(
+                        TableHeaderCell.create("Column1"),
+                        TableHeaderCell.create("Column2")
+                    )
+                    .spreadStyleToParts(bordersStyle)
             )
-        )
+            .addParts()
+            .spreadStyleToParts(
+                LayoutTextStyle.create(
+                    TextStyle.create("Times New Roman")
+                        .setBold(true)
+                        .setItalic(true)
+                        .setUnderline((byte) 1)
+                        .setFontSize((short) 15)
+                        .setColor(Color.GREY),
+                    bordersStyle
+                )
+            );
+    }
+}
 ```
+
 <img src="pic/html2.jpeg" width="200" alt=""/>
 
 Same result, but using StyleService:
+
 ```java
-        final var titleStyle =
+public class ReporterApplication {
+    public void Test() {
+        final LayoutStyle titleStyle =
             LayoutStyle.create()
                 .setAutoWidth(true)
-                .setCondition(StyleCondition.create(null, Title.class));
+                .setCondition(StyleCondition.create(Title.class));
 
-        final var bordersStyle =
+        final LayoutStyle bordersStyle =
             LayoutStyle.create()
                 .setBorderTop(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
                 .setBorderLeft(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
                 .setBorderRight(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
                 .setBorderBottom(BorderStyle.create(Color.RED, BorderWeight.MEDIUM))
-                .setCondition(StyleCondition.create(null, TableHeaderCell.class));
+                .setCondition(StyleCondition.create(TableHeaderCell.class));
 
-        final var commonCellsStyle =
+        final LayoutTextStyle commonCellsStyle =
             LayoutTextStyle.create(
                     TextStyle.create("Times New Roman")
                         .setBold(true)
@@ -184,7 +207,7 @@ Same result, but using StyleService:
                         .setColor(Color.GREY),
                     bordersStyle.clone().setCondition(null)
                 )
-                .setCondition(StyleCondition.create(null, TableCell.class));
+                .setCondition(StyleCondition.create(TableCell.class));
 
         final var styleService =
             HtmlStyleService.create()
@@ -197,9 +220,9 @@ Same result, but using StyleService:
                     Title.create("Title on first page"),
                     Table.create(
                             TableHeaderRow.create(
-                                    TableHeaderCell.create("Column1"),
-                                    TableHeaderCell.create("Column2")
-                                )
+                                TableHeaderCell.create("Column1"),
+                                TableHeaderCell.create("Column2")
+                            )
                         )
                         .addParts(
                             TableRow.create(
@@ -214,34 +237,48 @@ Same result, but using StyleService:
                 );
 
         final var htmlFormatter = HtmlFormatter.create().setStyleService(styleService);
-        final var documentHolder = htmlFormatter.handle(doc);
+
+        try (var documentHolder = htmlFormatter.handle(doc)) {
+            var file = documentHolder.getResource().getFile();
+        } catch (Throwable ignored) {
+
+        }
+    }
+}
 ```
+
 <img src="pic/html3.jpeg" width="400" alt=""/>
 
 Little example on how to get data from DB:
 
-```java 
-final NamedParameterJdbcTemplate jdbcTemplate = ...          //connection to db
-final var html =
-    Document.create()
-        .setLabel("doc.html")
-        .addParts(
-            QueryTable.create(
-                    TableHeaderRow.create(
-                        TableHeaderCell.create("Traffic name").setAliasName("traffic_name_as_in_db"),
-                        TableHeaderCell.create("Traffic direction").setAliasName("traffic_dir_as_in_db")
-                    )
-                )
-                .setNamedParameterJdbcTemplate(jdbcTemplate)
-        );
-//Creating appropriate formatter
-final var htmlFormatter = HtmlFormatter.create();
-//DocumentHolder as AutoCloseable will be holding our file "doc.html"
-try (var documentHolder = htmlFormatter.handle(doc)) {
-    var file = documentHolder.getResource().getFile();
-    //Any stuff with file here
-} catch (Throwable t) {
-    
+```java
+public class ReporterApplication {
+    public void Test() {
+        final NamedParameterJdbcTemplate jdbcTemplate;          //connection to db
+        // columns traffic_name_as_in_db, traffic_dir_as_in_db are present in DB
+        final TableHeaderCell th1 =
+            TableHeaderCell.create("Traffic name").setAliasName("traffic_name_as_in_db");
+
+        final TableHeaderCell th2 =
+            TableHeaderCell.create("Traffic direction").setAliasName("traffic_dir_as_in_db");
+
+        final var html =
+            Document.create()
+                .setLabel("doc.html")
+                .addParts(
+                    QueryTable.create(TableHeaderRow.create(th1, th2))
+                        .setNamedParameterJdbcTemplate(jdbcTemplate)
+                );
+        //Creating appropriate formatter
+        final var htmlFormatter = HtmlFormatter.create();
+        //DocumentHolder as AutoCloseable will be holding our file "doc.html"
+        try (var documentHolder = htmlFormatter.handle(doc)) {
+            var file = documentHolder.getResource().getFile();
+            //Any stuff with file here
+        } catch (Throwable ignored) {
+
+        }
+    }
 }
 ```
 
@@ -252,11 +289,12 @@ or [ReportTable](src/main/java/com/reporter/domain/ReportTable.java) must be set
 For more examples see [tests](src/test/java/com/reporter/TutorialTest.java).
 
 What reporter can't do yet:
+
 1) Render pictures
 2) Render any nested elements in any elements (for example table in table cell not available now)
 3) E.t.c.)
 
-#### Inner structure 
+#### Inner structure
 
 [ ![](pic/classes.jpg) ](pic/classes.jpg)
 
@@ -278,23 +316,42 @@ when exporting texts with different languages to pdf format, try to use differen
 1) Add appropriate .ttf file to [free_fonts](src/main/resources/free_fonts)
    folder and set it to text style as below:
 
-```java 
-...
-fontService
-    .initializeFonts();                                     //read all fonts and available locales from resources 
-...
-textStyle1
-    .getTextStyle()
-    .setFontNameResource("xiaolai_Monospaced_(en-zh).ttf")  //set font name 
-    .setFontFamilyStyle(FontFamilyStyle.MONOSPACED);        //set fontFamily class
-    .setFontLocale("zh")                                    //optionally set font locale
-    
-...
-Document
-    .create()
-    .addParts(
-        Title.create("一些文字").setStyle(textStyle1)
-    );    
+```java
+public class ReporterApplication {
+    public void Test() {
+        //read all fonts and available locales from resources
+        final var fontService = FontService.create()
+            .initializeFonts();
+
+        final var textStyleZH = TextStyle.create()
+            //set font name 
+            .setFontNameResource("xiaolai_Monospaced_(en-zh).ttf")
+            //set fontFamily class
+            .setFontFamilyStyle(FontFamilyStyle.MONOSPACED)
+            //optionally set font locale    
+            .setFontLocale("zh");
+
+
+        final Document doc = Document
+            .create()
+            .addParts(
+                Title.create("一些文字").setStyle(textStyle1)
+            );
+
+        //Create appropriate formatter
+        final var pdfFormatter = PdfFormatter.create()
+                .getStyleService()
+                //Set fontService here
+                .setFontService(fontService);
+        //DocumentHolder as AutoCloseable will be holding our file "doc.pdf"
+        try (var documentHolder = pdfFormatter.handle(doc)) {
+            var file = documentHolder.getResource().getFile();
+            //Any stuff with file here
+        } catch (Throwable ignored) {
+
+        }
+    }
+}
 ```
 
 The font file name should contain

@@ -18,7 +18,6 @@ import com.reporter.domain.styles.constants.Color;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Locale;
 
 public class BaseDocument {
 
@@ -72,22 +71,22 @@ public class BaseDocument {
                 .setBold(true)
                 .setFontFamilyStyle(FontFamilyStyle.MONOSPACED)
                 .setFontNameResource("courierNew")
-                .setCondition(StyleCondition.create(null, TableCell.class));
+                .setCondition(StyleCondition.create(TableCell.class));
 
         styleForHeading =
             LayoutTextStyle
                 .create(textStyleCell, layoutStyle2)
-                .setCondition(StyleCondition.create(null, Heading.class));
+                .setCondition(StyleCondition.create(Heading.class));
 
         styleForParagraph =
             LayoutTextStyle
                 .create(textStyleCell, layoutStyle2)
-                .setCondition(StyleCondition.create(null, Paragraph.class));
+                .setCondition(StyleCondition.create(Paragraph.class));
 
         styleForSeparator =
             LayoutTextStyle
                 .create(textStyleCell, layoutStyle2)
-                .setCondition(StyleCondition.create(null, Separator.class));
+                .setCondition(StyleCondition.create(Separator.class));
 
         fontService = FontService.
             create()

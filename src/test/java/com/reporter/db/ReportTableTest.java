@@ -35,8 +35,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.supercsv.prefs.CsvPreference;
 
-import java.awt.*;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.sql.Types;
@@ -284,7 +282,7 @@ public class ReportTableTest extends BaseQueryDocument {
             .setFontFamilyStyle(FontFamilyStyle.SANS_SERIF)
             .setFontSize((short) 14)
             .setBold(true)
-            .setCondition(StyleCondition.create(o -> o instanceof Title, Title.class));
+            .setCondition(StyleCondition.create(Title.class, o -> o instanceof Title));
 
         final var borderHeaderCell = BorderStyle.create(Color.GREY_50_PERCENT, BorderWeight.DOUBLE);
         final var borderCell = BorderStyle.create(Color.GREY_50_PERCENT, BorderWeight.THIN);
@@ -315,14 +313,13 @@ public class ReportTableTest extends BaseQueryDocument {
             .setHorAlignment(HorAlignment.LEFT);
 
         headerCellStyle = layoutStyleHeader
-            .setCondition(StyleCondition.create(o -> o instanceof TableHeaderCell, TableHeaderCell.class));
+            .setCondition(StyleCondition.create(TableHeaderCell.class, o -> o instanceof TableHeaderCell));
 
         final Predicate<Object> isTableRow = o -> o instanceof TableRow;
         final Predicate<Object> isInterlinear = o -> ((TableRow) o).getRowIndex() % 2 == 0;
         final var styleCondition = StyleCondition
             .create(
-                isTableRow.and(isInterlinear),
-                TableRow.class
+                TableRow.class, isTableRow.and(isInterlinear)
             );
 
         rowStyleNormal = LayoutTextStyle
@@ -339,8 +336,7 @@ public class ReportTableTest extends BaseQueryDocument {
             .setCondition(
                 StyleCondition
                     .create(
-                        isTableRow.and(isInterlinear.negate()),
-                        TableRow.class
+                        TableRow.class, isTableRow.and(isInterlinear.negate())
                     )
             );
     }
@@ -439,7 +435,7 @@ public class ReportTableTest extends BaseQueryDocument {
                 .create()
                 .setFontSize((short) 9)
                 .setCondition(
-                    StyleCondition.create(null, TableHeaderCell.class)
+                    StyleCondition.create(TableHeaderCell.class)
                 )
         );
 

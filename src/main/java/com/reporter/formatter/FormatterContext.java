@@ -140,8 +140,7 @@ public class FormatterContext {
             .setCondition(
                 StyleCondition
                     .create(
-                        o -> o instanceof TableHeaderCell,
-                        TableHeaderCell.class
+                        TableHeaderCell.class, o -> o instanceof TableHeaderCell
                     )
             );
     }
@@ -177,8 +176,7 @@ public class FormatterContext {
             .setCondition(
                 StyleCondition
                     .create(
-                        isTableCell.and(isInterlinear),
-                        TableCell.class
+                        TableCell.class, isTableCell.and(isInterlinear)
                     )
             );
     }
@@ -210,8 +208,7 @@ public class FormatterContext {
             )
             .setCondition(StyleCondition
                 .create(
-                    isTableCell.and(isInterlinear),
-                    TableCell.class
+                    TableCell.class, isTableCell.and(isInterlinear)
                 )
             );
     }

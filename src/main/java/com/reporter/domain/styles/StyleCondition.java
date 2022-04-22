@@ -17,23 +17,27 @@ public class StyleCondition {
     private static final Logger log = LoggerFactory.getLogger(StyleCondition.class);
 
     /**
-     * Object styling condition
-     */
-    protected Predicate<?> predicate;
-    /**
      * Object class
      */
     protected Class<?> clazz;
+    /**
+     * Object styling condition
+     */
+    protected Predicate<?> predicate;
 
-    public static StyleCondition create(Predicate<?> condition, Class<?> clazz) {
+    public static StyleCondition create(Class<?> clazz, Predicate<?> condition) {
         return new StyleCondition().setPredicate(condition).setClazz(clazz);
+    }
+
+    public static StyleCondition create(Class<?> clazz) {
+        return new StyleCondition().setClazz(clazz);
     }
 
     /**
      * Checking the condition of object styling,
      * the check should not change the condition itself or other styles.
      *
-     * @param t styling DocumentItem object
+     * @param t   styling DocumentItem object
      * @param <T> style object type, T extends DocumentItem
      * @return true if the condition is not set, or it is true on the object; otherwise - false
      */
@@ -62,16 +66,7 @@ public class StyleCondition {
     }
 
     public StyleCondition negate() {
-        return StyleCondition.create(predicate.negate(), clazz);
-    }
-
-    public Predicate<?> getPredicate() {
-        return predicate;
-    }
-
-    public StyleCondition setPredicate(Predicate<?> predicate) {
-        this.predicate = predicate;
-        return this;
+        return StyleCondition.create(clazz, predicate.negate());
     }
 
     public Class<?> getClazz() {
@@ -83,12 +78,21 @@ public class StyleCondition {
         return this;
     }
 
+    public Predicate<?> getPredicate() {
+        return predicate;
+    }
+
+    public StyleCondition setPredicate(Predicate<?> predicate) {
+        this.predicate = predicate;
+        return this;
+    }
+
     @Override
     public String toString() {
         return
             MoreObjects.toStringHelper(this)
-                .add("predicate", predicate)
                 .add("clazz", clazz)
+                .add("predicate", predicate)
                 .toString();
     }
 
@@ -104,12 +108,12 @@ public class StyleCondition {
         final StyleCondition that = (StyleCondition) o;
 
         return
-            Objects.equal(this.predicate, that.predicate)
-                && Objects.equal(this.clazz, that.clazz);
+            Objects.equal(this.clazz, that.clazz) &&
+                Objects.equal(this.predicate, that.predicate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(predicate, clazz);
+        return Objects.hashCode(clazz, predicate);
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 @SpringBootTest
 public class BaseQueryDocument {
@@ -36,7 +35,7 @@ public class BaseQueryDocument {
             .setFontFamilyStyle(FontFamilyStyle.SANS_SERIF)
             .setFontSize((short) 16)
             .setBold(true)
-            .setCondition(StyleCondition.create(o -> o instanceof Title, Title.class));
+            .setCondition(StyleCondition.create(Title.class, o -> o instanceof Title));
 
         final var border = BorderStyle.create(Color.GREY_50_PERCENT, BorderWeight.DOUBLE);
 
@@ -69,30 +68,30 @@ public class BaseQueryDocument {
                     .setHorAlignment(HorAlignment.CENTER)
                     .setVertAlignment(VertAlignment.CENTER)
             )
-            .setCondition(StyleCondition.create(o -> o instanceof TableHeaderCell, TableHeaderCell.class));
+            .setCondition(StyleCondition.create(TableHeaderCell.class, o -> o instanceof TableHeaderCell));
 
 
         rowStyleNormal = LayoutTextStyle
             .create(textStyle, layoutStyleNormal)
             .setCondition(
                 StyleCondition.create(
-                    o -> o instanceof TableRow
-                        && ((TableRow) o).getRowIndex() % 2 == 0,
-                    TableRow.class)
+                    TableRow.class, o -> o instanceof TableRow
+                        && ((TableRow) o).getRowIndex() % 2 == 0
+                )
             );
 
         rowStyleInterlinear = LayoutTextStyle
             .create(textStyle, layoutStyleInterlinear)
             .setCondition(
                 StyleCondition.create(
-                    o -> o instanceof TableRow
-                        && ((TableRow) o).getRowIndex() % 2 != 0,
-                    TableRow.class)
+                    TableRow.class, o -> o instanceof TableRow
+                        && ((TableRow) o).getRowIndex() % 2 != 0
+                )
             );
 
         rowStyleAlert = LayoutTextStyle
             .create(textStyle, layoutStyleAlert)
-            .setCondition(StyleCondition.create(o -> {
+            .setCondition(StyleCondition.create(TableRow.class, o -> {
                 if (o instanceof TableRow) {
                     final var cells = (ArrayList<TableCell>) ((TableRow) o).getParts();
                     if (cells.size() > 4) {
@@ -106,11 +105,11 @@ public class BaseQueryDocument {
                     }
                 }
                 return false;
-            }, TableRow.class));
+            }));
 
         cellStyle = LayoutTextStyle
             .create(textStyle, layoutStyleNormal.clone().setHorAlignment(HorAlignment.RIGHT))
-            .setCondition(StyleCondition.create(o -> {
+            .setCondition(StyleCondition.create(TableCell.class, o -> {
                 if (o instanceof TableCell) {
                     final var cell = (TableCell) o;
                     if (StringUtils.hasText(cell.getText())) {
@@ -119,7 +118,7 @@ public class BaseQueryDocument {
                     }
                 }
                 return false;
-            }, TableCell.class));
+            }));
 
         queryDoc = Document
             .create()

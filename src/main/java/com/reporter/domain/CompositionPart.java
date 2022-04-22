@@ -53,15 +53,20 @@ public abstract class CompositionPart<T extends CompositionPart<?, ?>, K extends
 
     /**
      * Method allows you to apply style to all nested parts of
-     * {@link CompositionPart} according style's {@link StyleCondition}
+     * {@link CompositionPart} with checking only clazz of {@link StyleCondition}
      *
      * @param style style that will be applied to parts
-     * @return this
+     * @return CompositionPart
      * @throws CloneNotSupportedException style is not Cloneable
      */
     @SuppressWarnings("unchecked")
     public T spreadStyleToParts(Style style) throws CloneNotSupportedException {
-        if (style != null) {
+        return spreadStyleToParts(style, -1);
+    }
+
+    @SuppressWarnings("unchecked")
+    public T spreadStyleToParts(Style style, int depth) throws CloneNotSupportedException {
+        if (depth != 0 && style != null) {
             for (final var part : parts) {
                 final var styleCondition = style.getCondition();
                 if (part.getStyle() == null
@@ -70,7 +75,7 @@ public abstract class CompositionPart<T extends CompositionPart<?, ?>, K extends
                     part.setStyle(style.clone());
                 }
                 if (part instanceof CompositionPart<?,?>) {
-                    ((CompositionPart<?,?>) part).spreadStyleToParts(style);
+                    ((CompositionPart<?,?>) part).spreadStyleToParts(style, depth - 1);
                 }
             }
         }
