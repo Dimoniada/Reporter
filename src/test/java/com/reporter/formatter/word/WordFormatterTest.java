@@ -63,6 +63,7 @@ public class WordFormatterTest extends BaseDocument {
                 .collect(Collectors.joining(";"));
 
         Assertions.assertEquals(expectedTextTables, actualTables);
+        docx.close();
 
         documentHolder.close();
     }
@@ -90,9 +91,9 @@ public class WordFormatterTest extends BaseDocument {
                         .collect(Collectors.joining(";"));
 
                 Assertions.assertTrue(actual.endsWith("simple footer\n"));
+                docx.close();
             }
         });
-
         documentHolder.close();
     }
 

@@ -123,9 +123,9 @@ public class QueryTable extends Table {
                     tableCell.setText(rs.getObject(i, String.class));
                 } else {
                     final var columnName =
-                        isTableHeaderRowFromData ?
-                            hc.getText() :
-                            hc.getAliasName();
+                        isTableHeaderRowFromData
+                        ? hc.getText()
+                        : hc.getAliasName();
                     tableCell.setText(rs.getObject(columnName, String.class));
                 }
                 tableRow.addPart(tableCell);
