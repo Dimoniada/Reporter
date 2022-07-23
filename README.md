@@ -6,7 +6,7 @@ html, pdf<font size=2><sup id="a1">[1](#f1)</sup></font>, xls, xlsx, doc<font si
 docx, csv
 \
 \
-To start just add folder "reporter" to your project.
+To start just add folder "Reporter" to your project.
 
 |       Dependencies       |      Usage      |
 |:------------------------:|:---------------:|
